@@ -1,4 +1,4 @@
-import { EmployeeModdel } from "../models/employeeModel";
+import { EmployeeModel } from "../models/employeeModel";
 import* as employeeInfo from "../models/employeeModel";
 import { CommandResponse, Employee } from "../../typeDefinitions";
 import { Resources, ResourceKey } from "../../../resourceLookup";
@@ -8,7 +8,7 @@ import { Resources, ResourceKey } from "../../../resourceLookup";
 export const execute = async (): Promise<CommandResponse<Employee>> =>
 {
     return employeeInfo.queryActiveExists()
-    .then((foundEmployee: EmployeeModdel|null): Promise<CommandResponse<Employee>>=>
+    .then((foundEmployee: EmployeeModel|null): Promise<CommandResponse<Employee>>=>
     {
         if(!employeeInfo)
         {
@@ -21,8 +21,7 @@ export const execute = async (): Promise<CommandResponse<Employee>> =>
 
         return Promise.resolve(<CommandResponse<Employee>>
             {
-                status: 200,
-               
+                status: 200, 
             });
         
     });
