@@ -1,6 +1,7 @@
 import { EmployeeModel } from "../models/employeeModel";
 import* as employeeInfo from "../models/employeeModel";
 import { DatabaseConnection } from "../models/databaseConnection";
+import { Http2ServerRequest, Http2ServerResponse } from "http2";
 
 
 interface signIn
@@ -33,14 +34,15 @@ function verifyCredentals(credentals:signIn)
     return (verifyIfValidId(credentals) && verifyIfValidPassword(credentals));
 }
 
-function findEmployee(id: signIn)
+function findEmployee(id: signIn) 
 {
+    
     return employeeInfo.queryByEmployeeId(Number(id.employeeId));
 }
 
-function checkPassword(password: signIn, employee: EmployeeModel)
+function checkPassword(InputPassword: signIn, employee:signIn) 
 {
-    if(password.password == String(employee.password))
+    if(InputPassword.password == String(employee.password))
     {
         return true;
     }
@@ -49,3 +51,25 @@ function checkPassword(password: signIn, employee: EmployeeModel)
         return false;
     }
 }
+
+var express = require("express");
+var sesseion=require("express-session");
+var app=express();
+
+app.use(sesseion({secret:"String for place holder"}))
+app.post('/', function(req  , res)
+{ 
+    
+    if(verifyCredentals(req))
+    {
+        var employee: EmployeeModel
+        employee=findEmployee(req)
+        if(checkPassword(req,employee))
+        
+        {
+
+        }    
+    }
+    
+
+})
