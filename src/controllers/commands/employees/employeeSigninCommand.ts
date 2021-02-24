@@ -1,7 +1,8 @@
 import { EmployeeModel } from "../models/employeeModel";
 import* as employeeInfo from "../models/employeeModel";
-import { DatabaseConnection } from "../models/databaseConnection";
-import { Http2ServerRequest, Http2ServerResponse } from "http2";
+import * as DataTransaction from "../models/databaseConnection"
+
+import { Request, Response } from "express";
 
 
 interface signIn
@@ -40,7 +41,7 @@ function findEmployee(id: signIn)
     return employeeInfo.queryByEmployeeId(Number(id.employeeId));
 }
 
-function checkPassword(InputPassword: signIn, employee:signIn) 
+function checkPassword(InputPassword: signIn, employee:EmployeeModel) 
 {
     if(InputPassword.password == String(employee.password))
     {
@@ -54,19 +55,23 @@ function checkPassword(InputPassword: signIn, employee:signIn)
 
 var express = require("express");
 var sesseion=require("express-session");
+var cookiePaser=require("cookie-parser")
 var app=express();
-
+app.use(cookiePaser())
 app.use(sesseion({secret:"String for place holder"}))
-app.post('/', function(req  , res)
+app.put('/', function(req  , res )
 { 
     
     if(verifyCredentals(req))
     {
         var employee: EmployeeModel
+       
         employee=findEmployee(req)
-        if(checkPassword(req,employee))
-        
+        if(employee&&checkPassword(req,employee))
         {
+             var transaction=DataTransaction.createTransaction()
+            
+            
 
         }    
     }
