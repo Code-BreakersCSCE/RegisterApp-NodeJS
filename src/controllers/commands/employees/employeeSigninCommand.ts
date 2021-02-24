@@ -10,13 +10,13 @@ interface signIn
 
 }
 
-function verifyId(id: signIn)
+function verifyIfValidId(id: signIn)
 {
-   return isNaN(Number(id.employeeId));
+   return !(isNaN(Number(id.employeeId)));
     
 }
 
-function verifyPassword(password: signIn)
+function verifyIfValidPassword(password: signIn)
 {
     if(password.password)
     {
@@ -30,7 +30,7 @@ function verifyPassword(password: signIn)
 
 function verifyCredentals(credentals:signIn)
 {
-    return (verifyId(credentals) && verifyPassword(credentals));
+    return (verifyIfValidId(credentals) && verifyIfValidPassword(credentals));
 }
 
 function findEmployee(id: signIn)
