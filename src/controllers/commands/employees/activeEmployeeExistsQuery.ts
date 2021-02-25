@@ -21,7 +21,8 @@ export const execute = async (): Promise<CommandResponse<Employee>> =>
 
         return Promise.resolve(<CommandResponse<Employee>>
             {
-                status: 200, 
+                status: 200,
+                
             });
         
     });
