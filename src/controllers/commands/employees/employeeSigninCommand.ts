@@ -1,9 +1,8 @@
 import { EmployeeModel } from "../models/employeeModel";
 import* as employeeInfo from "../models/employeeModel";
 import {createTransaction} from "../models/databaseConnection"
-import { Transaction } from "sequelize/types";
-import { values } from "sequelize/types/lib/operators";
-import {Express, response} from "express"
+import { ActiveUserModel, queryByEmployeeId, queryById, queryBySessionKey } from "../models/activeUserModel";
+
 
 
 
@@ -38,20 +37,16 @@ function verifyCredentals(credentals:signIn)
     return (verifyIfValidId(credentals) && verifyIfValidPassword(credentals));
 }
 
-function findEmployee(id: signIn  ) 
+async function findEmployee(id: signIn  )  
 {
-    var promiseInfo= employeeInfo.queryByEmployeeId(Number(id.employeeId))
-    var employee=promiseInfo.then(response=>
-        { 
-            const jason =JSON.stringify(response) 
-            return jason
-        })
-        return employee
+    var employeeData= await employeeInfo.queryByEmployeeId(Number(id.employeeId))
+    return employeeData
+    
 }
     
     
 
-  function checkPassword(InputPassword: signIn, employee: EmployeeModel) 
+  function checkPassword(InputPassword: signIn, employee: signIn) 
 {
     
     var employeeData = employee
@@ -65,3 +60,19 @@ function findEmployee(id: signIn  )
     }
 }
 
+async function inTransaction(id:string, key: string) 
+{
+    var transaction = await createTransaction();
+    var currentUser= await queryByEmployeeId(id, transaction);
+    if(currentUser)
+    {
+        currentUser.sessionKey=key;
+        currentUser.update(currentUser);
+    }
+    else
+    {
+        var newUser=ActiveUserModel.create({employeeId:id, sessionKey:key})
+        
+    }
+    
+}
