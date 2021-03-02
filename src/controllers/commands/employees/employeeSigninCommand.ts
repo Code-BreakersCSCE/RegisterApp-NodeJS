@@ -1,8 +1,11 @@
 import { EmployeeModel } from "../models/employeeModel";
 import* as employeeInfo from "../models/employeeModel";
-import * as DataTransaction from "../models/databaseConnection"
+import {createTransaction} from "../models/databaseConnection"
+import { Transaction } from "sequelize/types";
+import { values } from "sequelize/types/lib/operators";
+import {Express, response} from "express"
 
-import { Request, Response } from "express";
+
 
 
 interface signIn
@@ -35,15 +38,24 @@ function verifyCredentals(credentals:signIn)
     return (verifyIfValidId(credentals) && verifyIfValidPassword(credentals));
 }
 
-function findEmployee(id: signIn) 
+function findEmployee(id: signIn  ) 
+{
+    var promiseInfo= employeeInfo.queryByEmployeeId(Number(id.employeeId))
+    var employee=promiseInfo.then(response=>
+        { 
+            const jason =JSON.stringify(response) 
+            return jason
+        })
+        return employee
+}
+    
+    
+
+  function checkPassword(InputPassword: signIn, employee: EmployeeModel) 
 {
     
-    return employeeInfo.queryByEmployeeId(Number(id.employeeId));
-}
-
-function checkPassword(InputPassword: signIn, employee:EmployeeModel) 
-{
-    if(InputPassword.password == String(employee.password))
+    var employeeData = employee
+    if(InputPassword.password == String(employeeData.password))
     {
         return true;
     }
@@ -53,28 +65,3 @@ function checkPassword(InputPassword: signIn, employee:EmployeeModel)
     }
 }
 
-var express = require("express");
-var sesseion=require("express-session");
-var cookiePaser=require("cookie-parser")
-var app=express();
-app.use(cookiePaser())
-app.use(sesseion({secret:"String for place holder"}))
-app.put('/', function(req  , res )
-{ 
-    
-    if(verifyCredentals(req))
-    {
-        var employee: EmployeeModel
-       
-        employee=findEmployee(req)
-        if(employee&&checkPassword(req,employee))
-        {
-             var transaction=DataTransaction.createTransaction()
-            
-            
-
-        }    
-    }
-    
-
-})
