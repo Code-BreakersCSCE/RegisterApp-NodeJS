@@ -37,7 +37,7 @@ function verifyCredentals(credentals:signIn)
     return (verifyIfValidId(credentals) && verifyIfValidPassword(credentals));
 }
 
-async function findEmployee(id: signIn  )  
+async function findEmployee(id: signIn )  
 {
     var employeeData= await employeeInfo.queryByEmployeeId(Number(id.employeeId))
     return employeeData
@@ -71,7 +71,7 @@ async function inTransaction(id:string, key: string)
     }
     else
     {
-        var newUser=ActiveUserModel.create({employeeId:id, sessionKey:key})
+       ActiveUserModel.create({employeeId:id, sessionKey:key})
         
     }
     
