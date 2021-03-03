@@ -69,7 +69,7 @@ async function inTransaction(id:string, key: string)
     if(currentUser)
     {
         currentUser.sessionKey=key;
-        
+        currentUser.update(currentUser)
         
     }
     else
@@ -77,7 +77,7 @@ async function inTransaction(id:string, key: string)
        let newuser : ActiveUserModel =new ActiveUserModel
        newuser.employeeId=id
        newuser.sessionKey=key
-       
+       ActiveUserModel.create(newuser)
         
     }
     
