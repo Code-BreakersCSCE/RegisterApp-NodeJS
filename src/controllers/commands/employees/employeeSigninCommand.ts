@@ -1,7 +1,9 @@
 import { EmployeeModel } from "../models/employeeModel";
 import* as employeeInfo from "../models/employeeModel";
 import {createTransaction} from "../models/databaseConnection"
+import * as makeTransaction from "../models/databaseConnection"
 import { ActiveUserModel, queryByEmployeeId, queryById, queryBySessionKey } from "../models/activeUserModel";
+
 
 
 
@@ -62,16 +64,20 @@ async function findEmployee(id: signIn )
 
 async function inTransaction(id:string, key: string) 
 {
-    var transaction = await createTransaction();
-    var currentUser= await queryByEmployeeId(id, transaction);
+    let transaction = await makeTransaction.createTransaction();
+    let currentUser= await queryByEmployeeId(id, transaction);
     if(currentUser)
     {
         currentUser.sessionKey=key;
-        currentUser.update(currentUser);
+        
+        
     }
     else
     {
-       ActiveUserModel.create({employeeId:id, sessionKey:key})
+       let newuser : ActiveUserModel =new ActiveUserModel
+       newuser.employeeId=id
+       newuser.sessionKey=key
+       
         
     }
     

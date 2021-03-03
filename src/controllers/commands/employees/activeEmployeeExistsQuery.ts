@@ -3,7 +3,7 @@ import* as employeeInfo from "../models/employeeModel";
 import { CommandResponse, Employee } from "../../typeDefinitions";
 import { Resources, ResourceKey } from "../../../resourceLookup";
 
-//functianlity for finding active user
+// functianlity for finding active user
 
 export const execute = async (): Promise<CommandResponse<Employee>> =>
 {
