@@ -1,0 +1,67 @@
+<html>
+
+	<head>
+		<title>Register - Sign In</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1"> 
+
+		<link rel="stylesheet" type="text/css" href="/styles/master.css">
+
+		<script type="text/javascript" src="/scripts/master.js" defer></script>
+		<script type="text/javascript" src="/scripts/signIn.js" defer></script>
+	</head>
+	<script>
+		function checkInfo(empID, empPass)
+		{
+			let numTest = /^\d+$/.test(empID);
+			
+			if (numTest == false){
+				alert('Employee ID' + empID + ' is invalid.');
+				return 1; //this return case is for invalid employee ID
+			} else if (empPass == ""){
+				alert('Employee password is blank.');
+				return 2; //this return case is for invalid employee password
+			} else{
+				window.location.href="Main Menu.html";
+			}
+		}
+		
+		function proceed(result)
+		{
+			if(result == 0)
+				window.location.href="nextpage.html";
+		}
+		</script>
+	<body>
+		<style type="text/css">
+			.fieldset-auto-width {
+				display: inline-block;
+				width: 25em;
+			}
+		</style>	
+
+		<div class="header">
+			<h1 class="primary-message">Sign In</h1>
+		</div>
+			
+		<div id="main" class="main">
+			<div id="error" <% if (!locals.errorMessage || (locals.errorMessage === "")) { %> class="hidden" <% } %>>
+				<h4 id="errorMessage" class="error-message">
+					<% if (locals.errorMessage && (locals.errorMessage !== "")) { %>
+						<%= locals.errorMessage %>
+					<% } %>
+				</h4>
+			</div>
+
+			<form action="/" method="POST" onsubmit="return validateForm();" class="inputContent">
+				<!-- TODO: Form input elements -->
+				<fieldset class="fieldset-auto-width">
+					<legend>Login:</legend>
+					<input type="number" id="UserId" name="UserId" value="" placeholder="Employee ID"><br>
+					<input type="password" id="Password" name="Password" value="" placeholder="Password"><br><br>
+					<input type="submit" class = "button" value="Sign In" onclick="checkInfo(document.getElementById('UserId').value, document.getElementById('Password').value)">
+			</form>
+		</div>
+			
+	</body>
+
+</html>
