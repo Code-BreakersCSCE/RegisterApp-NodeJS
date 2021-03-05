@@ -3,6 +3,9 @@ import* as employeeInfo from "../models/employeeModel";
 import {createTransaction} from "../models/databaseConnection"
 import * as makeTransaction from "../models/databaseConnection"
 import { ActiveUserModel, queryByEmployeeId, queryById, queryBySessionKey } from "../models/activeUserModel";
+import { CommandResponse, Employee } from "../../typeDefinitions";
+import { Resources, ResourceKey } from "../../../resourceLookup";
+import { promises } from "dns";
 
 
 
@@ -39,10 +42,27 @@ function verifyCredentals(credentals:signIn)
     return (verifyIfValidId(credentals) && verifyIfValidPassword(credentals));
 }
 
-async function findEmployee(id: signIn )  
+async function findEmployee(id: signIn ) 
 {
-    var employeeData= await employeeInfo.queryByEmployeeId(Number(id.employeeId))
-    return employeeData
+      employeeInfo.queryByEmployeeId(Number(id.employeeId)).then(function(value)
+      {
+          if(value)
+          {
+              return Promise.resolve(<CommandResponse<EmployeeModel>> 
+                {status:200,
+                 data: value
+                });
+          }
+          else
+          {
+            return Promise.reject(<CommandResponse<EmployeeModel>>{
+                status: 404,
+                message: Resources.getString(ResourceKey.EMPLOYEE_NOT_FOUND)
+            });
+          }
+      });
+   
+      
     
 }
     
