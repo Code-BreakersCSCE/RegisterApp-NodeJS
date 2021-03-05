@@ -4,7 +4,6 @@ export interface ProductSaveRequest {
 	count: number;
 	lookupCode: string;
 }
-
 export interface EmployeeSaveRequest {
 	id?: string;
 	active: boolean;
@@ -14,6 +13,11 @@ export interface EmployeeSaveRequest {
 	managerId?: string;
 	classification: number;
 	isInitialEmployee?: boolean;
+}
+
+export interface SignInRequest {
+	employeeId: string;
+	password: string;
 }
 // End request object definitions
 
@@ -53,6 +57,10 @@ export interface EmployeeType {
 // Page response data
 export interface PageResponse {
 	errorMessage?: string;
+}
+
+export interface MainMenuPageResponse extends PageResponse {
+	isElevatedUser: boolean;
 }
 
 export interface ProductDetailPageResponse extends PageResponse {
