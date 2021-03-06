@@ -6,6 +6,7 @@ import { ActiveUserModel, queryByEmployeeId, queryById, queryBySessionKey } from
 import { CommandResponse, Employee } from "../../typeDefinitions";
 import { Resources, ResourceKey } from "../../../resourceLookup";
 import { promises } from "dns";
+import sequelize from "sequelize";
 
 
 
@@ -42,9 +43,9 @@ function verifyCredentals(credentals:signIn)
     return (verifyIfValidId(credentals) && verifyIfValidPassword(credentals));
 }
 
-async function findEmployee(id: signIn ) 
+async function findEmployee(id: signIn ) :Promise<CommandResponse<EmployeeModel>> 
 {
-      employeeInfo.queryByEmployeeId(Number(id.employeeId)).then(function(value)
+     return employeeInfo.queryByEmployeeId(Number(id.employeeId)).then(function(value)
       {
           if(value)
           {
@@ -82,23 +83,29 @@ async function findEmployee(id: signIn )
     }
 }
 
-async function inTransaction(id:string, key: string) 
+async function inTransaction(id:ActiveUserModel, key: string) :Promise<CommandResponse<ActiveUserModel>>
 {
-    let transaction = await makeTransaction.createTransaction();
-    let currentUser= await queryByEmployeeId(id, transaction);
-    if(currentUser)
+    return createTransaction().then(function(Transaction) 
     {
-        currentUser.sessionKey=key;
-        currentUser.update(currentUser)
-        
-    }
-    else
-    {
-       let newuser : ActiveUserModel =new ActiveUserModel
-       newuser.employeeId=id
-       newuser.sessionKey=key
-       ActiveUserModel.create(newuser)
-        
-    }
+        return queryByEmployeeId(id.employeeId, Transaction).then(function(user)
+        {
+            if(user)
+            {
+                return user.update(<object>{sessionKey:key}, <sequelize.InstanceUpdateOptions>{transaction:Transaction})
+            }
+            else
+            {
+                return ActiveUserModel.create(id,<sequelize.CreateOptions>{transaction:Transaction})
+            }
+        }).then(function(user)
+        {
+            Transaction.commit()
+            return <CommandResponse<ActiveUserModel>>
+            {
+                status:200,
+                data:user
+            }
+        })
+    })
     
 }
