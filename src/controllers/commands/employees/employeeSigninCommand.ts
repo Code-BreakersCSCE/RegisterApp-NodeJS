@@ -5,8 +5,9 @@ import * as makeTransaction from "../models/databaseConnection"
 import { ActiveUserModel, queryByEmployeeId, queryById, queryBySessionKey } from "../models/activeUserModel";
 import { CommandResponse, Employee } from "../../typeDefinitions";
 import { Resources, ResourceKey } from "../../../resourceLookup";
-import { promises } from "dns";
+
 import sequelize from "sequelize";
+import { promises } from "dns";
 
 
 
@@ -61,19 +62,16 @@ async function findEmployee(id: signIn ) :Promise<CommandResponse<EmployeeModel>
                 message: Resources.getString(ResourceKey.EMPLOYEE_NOT_FOUND)
             });
           }
-      });
-   
-      
-    
+      });  
 }
     
     
 
-  function checkPassword(InputPassword: signIn, employee: signIn) 
+  function checkPassword(InputPassword: signIn, dataBasePassword: String) 
 {
     
-    var employeeData = employee
-    if(InputPassword.password == String(employeeData.password))
+    
+    if(InputPassword.password == dataBasePassword)
     {
         return true;
     }
@@ -83,10 +81,11 @@ async function findEmployee(id: signIn ) :Promise<CommandResponse<EmployeeModel>
     }
 }
 
-async function inTransaction(id:ActiveUserModel, key: string) :Promise<CommandResponse<ActiveUserModel>>
+async function inTransaction(id:ActiveUserModel, key: String) :Promise<CommandResponse<ActiveUserModel>>
 {
     return createTransaction().then(function(Transaction) 
-    {
+    {  
+        // updateing the database
         return queryByEmployeeId(id.employeeId, Transaction).then(function(user)
         {
             if(user)
@@ -97,7 +96,7 @@ async function inTransaction(id:ActiveUserModel, key: string) :Promise<CommandRe
             {
                 return ActiveUserModel.create(id,<sequelize.CreateOptions>{transaction:Transaction})
             }
-
+           
         }).then(function(user)
         {
             Transaction.commit()
@@ -106,7 +105,7 @@ async function inTransaction(id:ActiveUserModel, key: string) :Promise<CommandRe
                 status:200,
                 data:user
             }
-            
+         // error handling 
         }).catch(function(error:any): Promise<CommandResponse<ActiveUserModel>>
             {
 
@@ -118,5 +117,49 @@ async function inTransaction(id:ActiveUserModel, key: string) :Promise<CommandRe
             })
         })
     
+    })
+}
+
+async function run(request:signIn, sessionKey:String ='') :Promise<CommandResponse<ActiveUserModel>>
+{
+    if(sessionKey=='' && !verifyCredentals(request))
+    {
+        return Promise.reject(<CommandResponse<ActiveUserModel>>
+        {
+            status: 500,
+            message: Resources.getString(ResourceKey.USER_SIGN_IN_CREDENTIALS_INVALID)
+        
+        })
+    }
+    // checking sign in and updating table
+    return employeeInfo.queryByEmployeeId(Number(request.employeeId)).then(function(employee)
+    {
+        if(employee!=null && checkPassword(request, String(employee.password)))
+        {
+          return inTransaction(<ActiveUserModel>{employeeId:employee.id,
+            name:(employee.firstName+" "+employee.lastName),
+            classification:employee.classification},sessionKey) 
+        }
+        else
+        {
+            return Promise.reject(<CommandResponse<ActiveUserModel>>
+                {
+                    status: 401,
+                    message:Resources.getString(ResourceKey.USER_UNABLE_TO_SIGN_IN)
+                })
+        }
+    }).then(function(value)
+    {
+        return <CommandResponse<ActiveUserModel>>
+        {
+            status:200,
+            data: <ActiveUserModel>
+            {
+                id: (<ActiveUserModel>value.data).id,
+                name:(<ActiveUserModel>value.data).name,
+                employeeId: (<ActiveUserModel>value.data).employeeId,
+                classification: (<ActiveUserModel>value.data).classification
+            }
+        }
     })
 }
