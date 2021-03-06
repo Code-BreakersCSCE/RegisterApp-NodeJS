@@ -97,6 +97,7 @@ async function inTransaction(id:ActiveUserModel, key: string) :Promise<CommandRe
             {
                 return ActiveUserModel.create(id,<sequelize.CreateOptions>{transaction:Transaction})
             }
+
         }).then(function(user)
         {
             Transaction.commit()
@@ -105,7 +106,17 @@ async function inTransaction(id:ActiveUserModel, key: string) :Promise<CommandRe
                 status:200,
                 data:user
             }
+            
+        }).catch(function(error:any): Promise<CommandResponse<ActiveUserModel>>
+            {
+
+            Transaction.rollback()
+            return Promise.reject(<CommandResponse<ActiveUserModel>>
+            {
+                status: 500,
+                message: Resources.getString(ResourceKey.EMPLOYEE_UNABLE_TO_SAVE)
+            })
         })
-    })
     
+    })
 }
