@@ -120,7 +120,7 @@ async function inTransaction(id:ActiveUserModel, key: String) :Promise<CommandRe
     })
 }
 
-async function signInProcedure(request:signIn, sessionKey:String ='') :Promise<CommandResponse<ActiveUserModel>>
+export async function signInProcedure(request:signIn, sessionKey:String ='') :Promise<CommandResponse<ActiveUserModel>>
 {
     if(sessionKey=='' && !verifyCredentals(request))
     {
