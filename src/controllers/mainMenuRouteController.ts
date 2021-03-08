@@ -14,6 +14,8 @@ export const start = async (req: Request, res: Response): Promise<void> => {
 		.then((activeUserCommandResponse: CommandResponse<ActiveUser>): void => {
 			// TODO: Examine the ActiveUser classification if you want this information
 			const isElevatedUser: boolean = true;
+				EmployeeHelper.isElevatedUser(
+					(<ActiveUser>activeUserCommandResponse.data).classification);
 
 			// This recommends to Firefox that it refresh the page every time
 			//  it is accessed
