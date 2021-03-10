@@ -4,6 +4,16 @@ export interface ProductSaveRequest {
 	count: number;
 	lookupCode: string;
 }
+export interface EmployeeSaveRequest {
+	id?: string;
+	active: boolean;
+	lastName: string;
+	password: string;
+	firstName: string;
+	managerId?: string;
+	classification: number;
+	isInitialEmployee?: boolean;
+}
 
 export interface SignInRequest {
 	employeeId: string;
