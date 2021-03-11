@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import { Resources } from "../resourceLookup";
 import * as Helper from "./helpers/routeControllerHelper";
+import * as EmployeeHelper from "./commands/employees/helpers/employeeHelper";
 import { ViewNameLookup, QueryParameterLookup } from "./lookups/routingLookup";
 import * as ValidateActiveUser from "./commands/activeUsers/validateActiveUserCommand";
 import { PageResponse, CommandResponse, ActiveUser, MainMenuPageResponse } from "./typeDefinitions";
