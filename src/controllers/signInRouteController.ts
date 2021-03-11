@@ -39,22 +39,23 @@ export const signIn = async (req: Request, res: Response): Promise<void> => {
 	//  and the "id" property of the (Express.Session)req.session variable
 	//  to sign in the user
 	console.log("signin");
-	return EmployeeSigninCommand.signInProcedure(req.body, req.sessionID)
-		.then((): void => {
-			console.log("si2");
-			return res.redirect(RouteLookup.MainMenu);
-		})
-		.catch((error: any): void => {
-			console.error("Error at sign in" + error.message);
+	return res.render(ViewNameLookup.MainMenu);
+	// return EmployeeSigninCommand.signInProcedure(req.body, req.sessionID)
+	// 	.then((): void => {
+	// 		console.log("si2");
+	// 		return res.redirect(RouteLookup.MainMenu);
+	// 	})
+	// 	.catch((error: any): void => {
+	// 		console.error("Error at sign in" + error.message);
 
-			return res.redirect(
-				RouteLookup.SignIn +
-					"?" +
-					QueryParameterLookup.ErrorCode +
-					"=" +
-					ResourceKey.USER_UNABLE_TO_SIGN_IN
-			);
-		});
+	// 		return res.redirect(
+	// 			RouteLookup.SignIn +
+	// 				"?" +
+	// 				QueryParameterLookup.ErrorCode +
+	// 				"=" +
+	// 				ResourceKey.USER_UNABLE_TO_SIGN_IN
+	// 		);
+	// 	});
 };
 
 export const clearActiveUser = async (
@@ -62,9 +63,11 @@ export const clearActiveUser = async (
 	res: Response
 ): Promise<void> => {
 	// TODO: Sign out the user associated with req.session.id
-	if (req.session == null) {
-		return res.redirect(RouteLookup.SignIn);
-	}
-	ClearActiveUser.deleteActive(req.session.id);
-	return res.redirect(RouteLookup.SignIn);
+	console.log("signout");
+	return res.render(ViewNameLookup.SignIn);
+	// if (req.session == null) {
+	// 	return res.redirect(RouteLookup.SignIn);
+	// }
+	// ClearActiveUser.deleteActive(req.session.id);
+	// return res.redirect(RouteLookup.SignIn);
 };
