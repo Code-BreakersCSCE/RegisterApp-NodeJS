@@ -1,15 +1,33 @@
 document.addEventListener("DOMContentLoaded", () => {
-	// TODO: Anything you want to do when the page is loaded?
+	const employeeIdEditElement = getEmployeeIdEditElement();
 });
 
-function validateForm(empID, empPass) {
-	let numTest = /^\d+$/.test(empID);
-	
-	if (numTest == false) {
-		return false; //this return case is for invalid employee ID
-	} else if (empPass === "") {
-		return false; //this return case is for invalid employee password
-	} else {
-		return true;
+function validateForm() {
+	const employeeIdEditElement = getEmployeeIdEditElement();
+	if (
+		isNaN(Number(employeeIdEditElement.value)) ||
+		Number(employeeIdEditElement.value) <= 0
+	) {
+		displayError("Check Employee ID");
+		return false;
 	}
+
+	const passwordEditElement = getPasswordEditElement();
+	if (
+		passwordEditElement.value == null ||
+		passwordEditElement.value.trim() === ""
+	) {
+		displayError("Password is blank");
+		return false;
+	}
+
+	return true;
+}
+
+function getPasswordEditElement() {
+	return document.getElementById("password");
+}
+
+function getEmployeeIdEditElement() {
+	return document.getElementById("employeeId");
 }
