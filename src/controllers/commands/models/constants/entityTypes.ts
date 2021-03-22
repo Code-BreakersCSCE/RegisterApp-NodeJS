@@ -4,3 +4,10 @@ export enum EmployeeClassification {
 	ShiftManager = 501,
 	GeneralManager = 701
 }
+
+export enum EmployeeClassificationLabel {
+	NotDefined = "Not Selected",
+	Cashier = "Cashier",
+	ShiftManager = "Shift Manager",
+	GeneralManager = "General Manager"
+}

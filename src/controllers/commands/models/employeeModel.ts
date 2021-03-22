@@ -103,7 +103,6 @@ export const queryActive = async (): Promise<EmployeeModel[]> => {
 };
 
 export const queryActiveExists = async (): Promise<EmployeeModel | null> => {
-	console.log("query 1.1");
 	return EmployeeModel.findOne(<Sequelize.FindOptions>{
 		where: <Sequelize.WhereAttributeHash>{ active: true }
 	});

@@ -35,8 +35,8 @@
 				<!-- TODO: Form input elements -->
 				<fieldset class="fieldset-auto-width">
 					<legend>Login:</legend>
-					<input type="number" id="employeeId" name="employeeId" value="" placeholder="Employee ID"><br>
-					<input type="password" id="password" name="password" value="" placeholder="Password"><br><br>
+					<input type="number" id="employeeId" name="employeeId" value="<% if (locals.employeeId && (locals.employeeId.trim() !== '')) { %><%= locals.employeeId %><% } %>" placeholder="Employee ID" class="update"><br>
+					<input type="password" id="password" name="password" placeholder="Password" class="update"><br><br>
 					<input type="submit" class = "button" value="Sign In">
 			</form>
 		</div>

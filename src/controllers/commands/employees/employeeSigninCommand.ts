@@ -1,160 +1,116 @@
+import Sequelize from "sequelize";
+import * as Helper from "../helpers/helper";
 import { EmployeeModel } from "../models/employeeModel";
-import * as employeeInfo from "../models/employeeModel";
-import { createTransaction } from "../models/databaseConnection";
-import * as makeTransaction from "../models/databaseConnection";
-import {
-	ActiveUserModel,
-	queryByEmployeeId,
-	queryById,
-	queryBySessionKey,
-} from "../models/activeUserModel";
-import { CommandResponse, Employee } from "../../typeDefinitions";
+import * as EmployeeHelper from "./helpers/employeeHelper";
+import { ActiveUserModel } from "../models/activeUserModel";
+import * as EmployeeRepository from "../models/employeeModel";
 import { Resources, ResourceKey } from "../../../resourceLookup";
+import * as ActiveUserRepository from "../models/activeUserModel";
+import * as DatabaseConnection from "../models/databaseConnection";
+import { CommandResponse, SignInRequest, ActiveUser } from "../../typeDefinitions";
 
-import sequelize from "sequelize";
-import { promises } from "dns";
+const validateSaveRequest = (signInRequest: SignInRequest): CommandResponse<ActiveUser> => {
+	if (Helper.isBlankString(signInRequest.employeeId)
+		|| isNaN(Number(signInRequest.employeeId))
+		|| Helper.isBlankString(signInRequest.password)) {
 
-interface SignIn {
-	employeeId: string;
-	password: string;
-}
-
-function verifyIfValidId(id: SignIn) {
-	return !isNaN(Number(id.employeeId));
-}
-
-function verifyIfValidPassword(password: SignIn) {
-	if (password.password) {
-		return true;
-	} else {
-		return false;
+		return <CommandResponse<ActiveUser>>{
+			status: 422,
+			message: Resources.getString(ResourceKey.USER_SIGN_IN_CREDENTIALS_INVALID)
+		};
 	}
-}
 
-function verifyCredentals(credentals: SignIn) {
-	return verifyIfValidId(credentals) && verifyIfValidPassword(credentals);
-}
+	return <CommandResponse<ActiveUser>>{ status: 200 };
+};
 
-async function findEmployee(
-	id: SignIn
-): Promise<CommandResponse<EmployeeModel>> {
-	return employeeInfo
-		.queryByEmployeeId(Number(id.employeeId))
-		.then(function (value) {
-			if (value) {
-				return Promise.resolve(<CommandResponse<EmployeeModel>>{
-					status: 200,
-					data: value,
-				});
-			} else {
-				return Promise.reject(<CommandResponse<EmployeeModel>>{
-					status: 404,
-					message: Resources.getString(
-						ResourceKey.EMPLOYEE_NOT_FOUND
-					),
-				});
-			}
-		});
-}
+const upsertActiveUser = async (
+	activeUser: ActiveUserModel
+): Promise<CommandResponse<ActiveUserModel>> => {
 
-function checkPassword(InputPassword: SignIn, dataBasePassword: String) {
-	if (InputPassword.password == dataBasePassword) {
-		return true;
-	} else {
-		return false;
-	}
-}
+	let upsertTransaction: Sequelize.Transaction;
 
-async function inTransaction(
-	id: ActiveUserModel,
-	key: String
-): Promise<CommandResponse<ActiveUserModel>> {
-	return createTransaction().then(function (Transaction) {
-		// updateing the database
-		return queryByEmployeeId(id.employeeId, Transaction)
-			.then(function (user) {
-				if (user) {
-					return user.update(
-						<object>{ sessionKey: key },
-						<sequelize.InstanceUpdateOptions>{
-							transaction: Transaction,
-						}
-					);
-				} else {
-					return ActiveUserModel.create(id, <sequelize.CreateOptions>{
-						transaction: Transaction,
+	return DatabaseConnection.createTransaction()
+		.then((createdTransaction: Sequelize.Transaction): Promise<ActiveUserModel | null> => {
+			upsertTransaction = createdTransaction;
+
+			return ActiveUserRepository.queryByEmployeeId(
+				activeUser.employeeId,
+				upsertTransaction);
+		}).then((queriedActiveUser: (ActiveUserModel | null)): Promise<ActiveUserModel> => {
+			if (queriedActiveUser) {
+				return queriedActiveUser.update(
+					<Object>{ sessionKey: activeUser.sessionKey },
+					<Sequelize.InstanceUpdateOptions>{
+						transaction: upsertTransaction
 					});
-				}
-			})
-			.then(function (user) {
-				Transaction.commit();
-				return <CommandResponse<ActiveUserModel>>{
-					status: 200,
-					data: user,
-				};
-				// error handling
-			})
-			.catch(function (
-				error: any
-			): Promise<CommandResponse<ActiveUserModel>> {
-				Transaction.rollback();
-				return Promise.reject(<CommandResponse<ActiveUserModel>>{
-					status: 500,
-					message: Resources.getString(
-						ResourceKey.EMPLOYEE_UNABLE_TO_SAVE
-					),
-				});
-			});
-	});
-}
-
-export async function signInProcedure(
-	request: SignIn,
-	sessionKey: String = ""
-): Promise<CommandResponse<ActiveUserModel>> {
-	if (sessionKey == "" && !verifyCredentals(request)) {
-		return Promise.reject(<CommandResponse<ActiveUserModel>>{
-			status: 500,
-			message: Resources.getString(
-				ResourceKey.USER_SIGN_IN_CREDENTIALS_INVALID
-			),
-		});
-	}
-	// checking sign in and updating table
-	return employeeInfo
-		.queryByEmployeeId(Number(request.employeeId))
-		.then(function (employee) {
-			if (
-				employee != null &&
-				checkPassword(request, String(employee.password))
-			) {
-				return inTransaction(
-					<ActiveUserModel>{
-						employeeId: employee.id,
-						name: employee.firstName + " " + employee.lastName,
-						classification: employee.classification,
-					},
-					sessionKey
-				);
 			} else {
-				return Promise.reject(<CommandResponse<ActiveUserModel>>{
-					status: 401,
-					message: Resources.getString(
-						ResourceKey.USER_UNABLE_TO_SIGN_IN
-					),
-				});
+				return ActiveUserModel.create(
+					activeUser,
+					<Sequelize.CreateOptions>{
+						transaction: upsertTransaction
+					});
 			}
-		})
-		.then(function (value) {
+		}).then((activeUser: ActiveUserModel): CommandResponse<ActiveUserModel> => {
+			upsertTransaction.commit();
+
 			return <CommandResponse<ActiveUserModel>>{
 				status: 200,
-				data: <ActiveUserModel>{
-					id: (<ActiveUserModel>value.data).id,
-					name: (<ActiveUserModel>value.data).name,
-					employeeId: (<ActiveUserModel>value.data).employeeId,
-					classification: (<ActiveUserModel>value.data)
-						.classification,
-				},
+				data: activeUser
+			};
+		}).catch((error: any): Promise<CommandResponse<ActiveUserModel>> => {
+			upsertTransaction.rollback();
+
+			return Promise.reject(<CommandResponse<ActiveUserModel>>{
+				status: 500,
+				message: error.message
+			});
+		});
+};
+
+export const execute = async (
+	signInRequest: SignInRequest,
+	session?: Express.Session
+): Promise<CommandResponse<ActiveUser>> => {
+
+	if (session == null) {
+		return Promise.reject(<CommandResponse<ActiveUser>>{
+			status: 500,
+			message: Resources.getString(ResourceKey.USER_SESSION_NOT_FOUND)
+		});
+	}
+
+	const validationResponse: CommandResponse<ActiveUser> =
+		validateSaveRequest(signInRequest);
+	if (validationResponse.status !== 200) {
+		return Promise.reject(validationResponse);
+	}
+
+	return EmployeeRepository.queryByEmployeeId(Number(signInRequest.employeeId))
+		.then((queriedEmployee: (EmployeeModel | null)): Promise<CommandResponse<ActiveUserModel>> => {
+			if ((queriedEmployee == null) ||
+				(EmployeeHelper.hashString(signInRequest.password) !== queriedEmployee.password.toString())) {
+
+				return Promise.reject(<CommandResponse<ActiveUser>>{
+					status: 401,
+					message: Resources.getString(ResourceKey.USER_SIGN_IN_CREDENTIALS_INVALID)
+				});
+			}
+
+			return upsertActiveUser(<ActiveUserModel>{
+				employeeId: queriedEmployee.id,
+				sessionKey: (<Express.Session>session).id,
+				classification: queriedEmployee.classification,
+				name: (queriedEmployee.firstName + " " + queriedEmployee.lastName)
+			});
+		}).then((activeUserCommandResponse: CommandResponse<ActiveUserModel>): CommandResponse<ActiveUser> => {
+			return <CommandResponse<ActiveUser>>{
+				status: 200,
+				data: <ActiveUser>{
+					id: (<ActiveUserModel>activeUserCommandResponse.data).id,
+					name: (<ActiveUserModel>activeUserCommandResponse.data).name,
+					employeeId: (<ActiveUserModel>activeUserCommandResponse.data).employeeId,
+					classification: (<ActiveUserModel>activeUserCommandResponse.data).classification
+				}
 			};
 		});
-}
+};

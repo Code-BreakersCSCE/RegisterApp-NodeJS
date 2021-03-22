@@ -4,6 +4,7 @@ export interface ProductSaveRequest {
 	count: number;
 	lookupCode: string;
 }
+
 export interface EmployeeSaveRequest {
 	id?: string;
 	active: boolean;
@@ -72,6 +73,16 @@ export interface ProductListingPageResponse extends PageResponse {
 	products: Product[];
 	isElevatedUser: boolean;
 }
+
+export interface EmployeeDetailPageResponse extends PageResponse {
+	employee: Employee;
+	isInitialEmployee: boolean;
+	employeeTypes: EmployeeType[];
+}
+
+export interface SignInPageResponse extends PageResponse {
+	employeeId: string;
+}
 // End page response data
 
 // API response data
@@ -82,6 +93,10 @@ export interface ApiResponse {
 
 export interface ProductSaveResponse extends ApiResponse {
 	product: Product;
+}
+
+export interface EmployeeSaveResponse extends ApiResponse {
+	employee: Employee;
 }
 // End API response data
 // End response object definitions
