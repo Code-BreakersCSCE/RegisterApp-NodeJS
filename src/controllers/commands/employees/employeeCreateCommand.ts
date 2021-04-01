@@ -1,24 +1,15 @@
-import { CommandResponse, Employee } from "../../typeDefinitions";
-import * as EmployeeRepository from "../models/employeeModel";
+import { CommandResponse, Employee,EmployeeSaveRequest } from "../../typeDefinitions";
+import  {EmployeeModel }from "../models/employeeModel";
 import { Resources, ResourceKey } from "../../../resourceLookup";
-import { mapEmployeeData,  } from "./helpers/employeeHelper";
+import { hashString, mapEmployeeData,  } from "./helpers/employeeHelper";
 import { isBlankString } from "../helpers/helper";
+import { EmployeeClassification } from "../models/constants/entityTypes";
 
 
 
-interface EmployeeSaveRequest{
-    recordId: string,
-    active: boolean,
-    firstName:string,
-    lastName:string,
-    password:string,
-    managerId?: string,
-    classification: number,
-    initialEmployee?: Boolean
 
-};
 
-function validateSaveRequest(req: EmployeeSaveRequest,initalEmployee:boolean=false):CommandResponse<Employee>{
+export function validateSaveRequest(req: EmployeeSaveRequest,initalEmployee:boolean=false):CommandResponse<Employee>{
     let invalidReq=false;
     let errMesage:String="";
     if(isBlankString(req.firstName)|| isBlankString(req.lastName)){
@@ -49,5 +40,25 @@ function validateSaveRequest(req: EmployeeSaveRequest,initalEmployee:boolean=fal
 }
 
 export async function newEmployee(req:EmployeeSaveRequest, initalEmployee:boolean=false) {
-    
+    let validRequest= validateSaveRequest(req);
+    if(validRequest.status==200){
+        let newEmployee :EmployeeModel=<EmployeeModel>
+        {
+            firstName: req.firstName,
+            lastName: req.lastName,
+            password: Buffer.from(hashString(req.password)),
+            active:true,
+            managerId:req.managerId,
+            classification: (!initalEmployee? <EmployeeClassification>req.classification:
+                EmployeeClassification.GeneralManager)
+        };
+        return EmployeeModel.create(newEmployee).then(function(newEmployee):CommandResponse<Employee>{
+            return <CommandResponse<Employee>>{
+                status: 201,
+                data: mapEmployeeData(newEmployee)
+            };
+        });
+
+    }
+    return Promise.reject(validRequest);
 }
