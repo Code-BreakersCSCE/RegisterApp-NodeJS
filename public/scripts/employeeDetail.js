@@ -26,17 +26,17 @@ function saveActionClick(event) {
     + (employeeIdIsDefined ? employeeId : ""));
     const saveEmployeeRequest = {
         id: employeeId,
-		managerId: getEmployeeManagerId().value,
+	managerId: getEmployeeManagerId().value,
         lastname : getEmployeeLastNameElement().value,
-		firstname : getEmployeeFirstNameElement().value,
-		password : getEmployeePasswordEditElement().value,
+	firstname : getEmployeeFirstNameElement().value,
+	password : getEmployeePasswordEditElement().value,
         classification: getEmployeeTypeSelectElement().value
     };
     // TODO: Actually save the employee via an AJAX call
 
     if (employeeIdIsDefined){
         ajaxPut(saveActionUrl, saveemployeeRequest, (callbackResponse) => {
-			saveActionElement.disabled = false;
+		saveActionElement.disabled = false;
 
         if (isSuccessResponse(callbackResponse)) {    
 	    completeSaveAction(callbackResponse);
@@ -45,7 +45,7 @@ function saveActionClick(event) {
     
     }  else {
         ajaxPost(saveActionUrl, saveemployeeRequest, (callbackResponse) => {
-			saveActionElement.disabled = false;
+		saveActionElement.disabled = false;
 
 			if (isSuccessResponse(callbackResponse)) {
 				completeSaveAction(callbackResponse);
