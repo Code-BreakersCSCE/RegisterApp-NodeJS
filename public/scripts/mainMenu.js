@@ -9,7 +9,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 	getCreateEmployeeActionElement().addEventListener(
 		"click",
-		() => { displayError("Functionality has not yet been implemented."); });
+		() => { window.location.assign("/employeeDetail"); });
 
 	getProductSalesReportActionElement().addEventListener(
 		"click",
