@@ -2,7 +2,7 @@
 
 import express from "express";
 import {RouteLookup} from "../controllers/lookups/routingLookup";
-import * as EmployeeDetailRouteController from "../controllers/EmployeeDetailRouteController";
+import * as EmployeeDetailRouteController from "../controllers/employeeDetailRouteController";
 
 function EmployeeDetailRoutes(server: express.Express) {
 	server.get(
