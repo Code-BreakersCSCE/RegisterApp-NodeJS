@@ -21,7 +21,7 @@ export function validateSaveRequest(
 	} else if (isBlankString(req.lastName)) {
 		invalidReq = true;
 		errMesage = "last name is blank";
-	}else if (isBlankString(req.password)) {
+	} else if (isBlankString(req.password)) {
 		invalidReq = true;
 		errMesage = Resources.getString(ResourceKey.EMPLOYEE_PASSWORD_INVALID);
 	} else if (
@@ -50,7 +50,7 @@ export async function newEmployee(
 ) {
 	const validRequest = validateSaveRequest(req);
 	if (validRequest.status == 200) {
-		let newEmployee: EmployeeModel = <EmployeeModel>{
+		const newEmployee: EmployeeModel = <EmployeeModel>{
 			firstName: req.firstName,
 			lastName: req.lastName,
 			password: Buffer.from(hashString(req.password)),
