@@ -13,7 +13,7 @@ export  const validateSaveRequest = (
 	let errorMessage: string = "";
 
 	if (Helper.isBlankString(employeeSaveRequest.firstName)) {
-		errorMessage = Resources.getString(ResourceKey.EMPLOYEE_FIRST_NAME_INVALID);
+		errorMessage = Resources.getString(ResourceKey.EMPLOYEE_FIRST_NAME_INVALID) + employeeSaveRequest.firstName;
 	} else if (Helper.isBlankString(employeeSaveRequest.lastName)) {
 		errorMessage = Resources.getString(ResourceKey.EMPLOYEE_LAST_NAME_INVALID);
 	} else if (Helper.isBlankString(employeeSaveRequest.password)) {
