@@ -85,7 +85,7 @@ function validateSave() {
 
 	if (passwordEditElement.value !== getEmployeeConfirmPassword()) {
 		displayError("Passwords do not match.");
-		passwordEditElement.focus()
+		passwordEditElement.focus();
 		passwordEditElement.select();
 		return false;
 	}
