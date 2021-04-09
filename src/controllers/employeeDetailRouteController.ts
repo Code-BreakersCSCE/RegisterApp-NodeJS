@@ -1,3 +1,5 @@
+//employeeDetailRouteController.ts
+
 import { Request, Response } from "express";
 import * as Helper from "./helpers/routeControllerHelper";
 import { Resources, ResourceKey } from "../resourceLookup";
@@ -11,8 +13,29 @@ interface CanCreateEmployee {
 }
 
 const determineCanCreateEmployee = async (req: Request): Promise<CanCreateEmployee> => {
-	// TODO: Logic to determine if the user associated with the current session
+	let employeeExists: boolean;
+		// TODO: Logic to determine if the user associated with the current session
 	//  is able to create an employee
+	
+	return EmployeeExistsQuery.query()
+		.then((employeeExistsCommandResponse: CommandResponse<boolean>): Promise<CommandResponse<ActiveUser>> => {
+			employeeExists = ((employeeExistsCommandResponse.data != null) && employeeExistsCommandResponse.data);
+			
+		if (!employeeExists) {
+			return Promise.resolve(
+				<CommandResponse<ActiveUser>>{ status: 200});
+		}
+		
+			return ValidateActiveUser.execute((<Express.Session>req.session).id);
+		}).then((activeUserCommandResponse: CommandResponse<ActiveUser>): CanCreateEmployee => {
+			return <CanCreateEmployee>{
+				employeeExists: employeeExists,
+				isElevatedUser: ((activeUserCommandResponse.data != null) && EmployeeHelper.isElevatedUser(
+					(<ActiveUser>activeUserCommandResponse.data).classification))
+			};
+		});
+		
+
 	return <CanCreateEmployee>{ employeeExists: false, isElevatedUser: false };
 };
 
@@ -30,8 +53,18 @@ export const start = async (req: Request, res: Response): Promise<void> => {
 			}
 
 			// TODO: Serve up the page
+			return res.render(
+				ViewNameLookup.EmployeeDetail,
+				<EmployeeDetailPageResponse>{
+					employee: buildEmptyEmployee(),
+					employeeTypes: buildEmployeeTypes(),
+					isInitialEmployee: !canCreateEmployee.employeeExists,
+					errorMessage: Resources.getString(req.query[QueryParameterLookup.ErrorCode])
+				});
+
 		}).catch((error: any): void => {
 			// TODO: Handle any errors that occurred
+			return processStartEmployeeDetailError(error, res);
 		});
 };
 
@@ -48,13 +81,24 @@ export const startWithEmployee = async (req: Request, res: Response): Promise<vo
 					message: Resources.getString(ResourceKey.USER_NO_PERMISSIONS)
 				});
 			}
-
 			// TODO: Query the employee details using the request route parameter
+			return EmployeeQuery.queryById(
+				req.params[ParameterLookup.EmployeeId]);
 			return Promise.resolve();
-		}).then((/* TODO: Some employee details */): void => {
+			/* TODO: Some employee details in then() function below*/
+		}).then((employeeCommandResponse: CommandResponse<Employee>): void => {
 			// TODO: Serve up the page
+			return res.render(
+				ViewNameLookup.EmployeeDetail,
+				<EmployeeDetailPageResponse>{
+					isInitialEmployee: false,
+					employeeTypes: buildEmployeeTypes(),
+					employee: employeeCommandResponse.data,
+					errorMessage: Resources.getString(req.query[QueryParameterLookup.ErrorCode])
+				});
 		}).catch((error: any): void => {
 			// TODO: Handle any errors that occurred
+			return processStartEmployeeDetailError(error, res);
 		});
 };
 
@@ -89,6 +133,18 @@ const saveEmployee = async (
 			return performSave(req.body, !employeeExists);
 		}).then((saveEmployeeCommandResponse: CommandResponse<Employee>): void => {
 			// TODO: Handle the save response and send a response to the HTTP request
+			const response: EmployeeSaveResponse = <EmployeeSaveResponse>{
+				employee: <Employee>saveEmployeeCommandResponse.data
+			};
+			
+			if (!employeeExists) {
+				response.redirectUrl = (RouteLookup.SignIn
+					+ "?" + QueryParameterLookup.EmployeeId
+					+ "=" + (<Employee>saveEmployeeCommandResponse.data).employeeId);
+			}
+			
+			res.status(saveEmployeeCommandResponse.status).send(response);
+			
 		}).catch((error: any): void => {
 			return Helper.processApiError(
 				error,
@@ -101,9 +157,9 @@ const saveEmployee = async (
 };
 
 export const updateEmployee = async (req: Request, res: Response): Promise<void> => {
-	return; // TODO: invoke saveEmployee() with the appropriate save functionality
+	return saveEmployee(req, res, EmployeeUpdateCommand.execute); // TODO: invoke saveEmployee() with the appropriate save functionality
 };
 
 export const createEmployee = async (req: Request, res: Response): Promise<void> => {
-	return; // TODO: invoke saveEmployee() with the appropriate save functionality
+	return saveEmployee(req, res, EmployeeCreateCommand.execute); // TODO: invoke saveEmployee() with the appropriate save functionality
 };
