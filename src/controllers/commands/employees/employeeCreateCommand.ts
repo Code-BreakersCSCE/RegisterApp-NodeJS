@@ -18,7 +18,7 @@ export function validateSaveRequest(
 	if (!isBlankString(req.firstName)) {
 		invalidReq = true;
 		errMesage = "first name is blank";
-	} else if (isBlankString(req.lastName)) {
+	} else if (!isBlankString(req.lastName)) {
 		invalidReq = true;
 		errMesage = "last name is blank";
 	} else if (isBlankString(req.password)) {
