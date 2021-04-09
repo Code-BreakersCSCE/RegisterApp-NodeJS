@@ -28,7 +28,7 @@ export function validateSaveRequest(
 		!initalEmployee &&
 		(req.classification == null ||
 			isNaN(req.classification) ||
-			!(req.classification in req))
+			!(req.classification in EmployeeClassification))
 	) {
 		errMesage = Resources.getString(ResourceKey.EMPLOYEE_TYPE_INVALID);
 		invalidReq = true;
