@@ -71,7 +71,7 @@ const processStartEmployeeDetailError = (error: any, res: Response): void => {
 const determineCanCreateEmployee = async (req: Request): Promise<CanCreateEmployee> => {
 	let employeeExists: boolean;
 
-	return EmployeeExistsQuery.query()
+	return EmployeeExistsQuery.execute()
 		.then((employeeExistsCommandResponse: CommandResponse<boolean>): Promise<CommandResponse<ActiveUser>> => {
 			employeeExists = ((employeeExistsCommandResponse.data != null)
 				&& employeeExistsCommandResponse.data);
@@ -132,7 +132,7 @@ export const startWithEmployee = async (req: Request, res: Response): Promise<vo
 				});
 			}
 
-			return EmployeeQuery.queryById(
+			return EmployeeQuery.findById(
 				req.params[ParameterLookup.EmployeeId]);
 		}).then((employeeCommandResponse: CommandResponse<Employee>): void => {
 			return res.render(
@@ -202,7 +202,7 @@ const saveEmployee = async (
 };
 
 export const updateEmployee = async (req: Request, res: Response): Promise<void> => {
-	return saveEmployee(req, res, EmployeeUpdateCommand.execute);
+	return saveEmployee(req, res, EmployeeUpdateCommand.employeeUpdate);
 };
 
 export const createEmployee = async (req: Request, res: Response): Promise<void> => {
