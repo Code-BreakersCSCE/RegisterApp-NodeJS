@@ -61,7 +61,7 @@ function saveActionClick(event) {
 function validateSave() {
 	const firstNameEditElement = getEmployeeFirstNameEditElement();
 	if (firstNameEditElement.value.trim() === "") {
-		displayError("Please provide a valid employee First name.");
+		displayError("Please provide a valid employee first name.");
 		firstNameEditElement.focus();
 		firstNameEditElement.select();
 		return false;
@@ -101,6 +101,7 @@ function validateSave() {
 
 	return true;
 }
+
 function completeSaveAction(callbackResponse){
 	if(callbackResponse.data = null){
 		return;
