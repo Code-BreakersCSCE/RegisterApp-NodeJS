@@ -139,7 +139,7 @@ export const startWithEmployee = async (req: Request, res: Response): Promise<vo
 				});
 			}
 
-			return EmployeeQuery.queryById(
+			return EmployeeQuery.findById(
 				req.params[ParameterLookup.EmployeeId]);
 		}).then((employeeCommandResponse: CommandResponse<Employee>): void => {
 			return res.render(
@@ -210,9 +210,9 @@ const saveEmployee = async (
 };
 
 export const updateEmployee = async (req: Request, res: Response): Promise<void> => {
-	return saveEmployee(req, res, EmployeeUpdateCommand.execute); // TODO: invoke saveEmployee() with the appropriate save functionality
+	return saveEmployee(req, res, EmployeeUpdateCommand.updateEmployee); // TODO: invoke saveEmployee() with the appropriate save functionality
 };
 
 export const createEmployee = async (req: Request, res: Response): Promise<void> => {
-	return saveEmployee(req, res, EmployeeCreateCommand.execute); // TODO: invoke saveEmployee() with the appropriate save functionality
+	return saveEmployee(req, res, EmployeeCreateCommand.newEmployee); // TODO: invoke saveEmployee() with the appropriate save functionality
 };
