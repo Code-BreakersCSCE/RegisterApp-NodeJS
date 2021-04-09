@@ -18,12 +18,64 @@ interface CanCreateEmployee {
 	isElevatedUser: boolean;
 }
 
+const buildEmployeeTypes = (): EmployeeType[] => {
+	const employeeTypes: EmployeeType[] = [];
+
+	employeeTypes.push(<EmployeeType>{
+		value: EmployeeClassification.NotDefined,
+		label: EmployeeClassificationLabel.NotDefined
+	});
+	employeeTypes.push(<EmployeeType>{
+		value: EmployeeClassification.Cashier,
+		label: EmployeeClassificationLabel.Cashier
+	});
+	employeeTypes.push(<EmployeeType>{
+		value: EmployeeClassification.ShiftManager,
+		label: EmployeeClassificationLabel.ShiftManager
+	});
+	employeeTypes.push(<EmployeeType>{
+		value: EmployeeClassification.GeneralManager,
+		label: EmployeeClassificationLabel.GeneralManager
+	});
+
+	return employeeTypes;
+};
+
+const buildEmptyEmployee = (): Employee => {
+	return <Employee>{
+		id: "",
+		lastName: "",
+		active: false,
+		firstName: "",
+		employeeId: "",
+		classification: EmployeeClassification.NotDefined,
+		managerId: Resources.getString(ResourceKey.EMPTY_UUID)
+	};
+};
+
+const processStartEmployeeDetailError = (error: any, res: Response): void => {
+	if (Helper.processStartError(error, res)) {
+		return;
+	}
+
+	res.status((error.status || 500))
+		.render(
+			ViewNameLookup.EmployeeDetail,
+			<EmployeeDetailPageResponse>{
+				isInitialEmployee: false,
+				employee: buildEmptyEmployee(),
+				employeeTypes: buildEmployeeTypes(),
+				errorMessage: (error.message
+					|| Resources.getString(ResourceKey.EMPLOYEE_UNABLE_TO_QUERY))
+			});
+};
+
 const determineCanCreateEmployee = async (req: Request): Promise<CanCreateEmployee> => {
 	let employeeExists: boolean;
 		// TODO: Logic to determine if the user associated with the current session
 	//  is able to create an employee
 	
-	return EmployeeExistsQuery.query()
+	return EmployeeExistsQuery.execute()
 		.then((employeeExistsCommandResponse: CommandResponse<boolean>): Promise<CommandResponse<ActiveUser>> => {
 			employeeExists = ((employeeExistsCommandResponse.data != null) && employeeExistsCommandResponse.data);
 			
