@@ -26,10 +26,10 @@ function saveActionClick(event) {
     + (employeeIdIsDefined ? employeeId : ""));
     const saveEmployeeRequest = {
         id: employeeId,
-	managerId: getEmployeeManagerId(),
-        lastname : getEmployeeLastNameEditElement().value,
-	firstname : getEmployeeFirstNameEditElement().value,
-	password : getEmployeePasswordEditElement().value,
+		managerId: getEmployeeManagerId(),
+        lastName : getEmployeeLastNameEditElement().value,
+		firstName : getEmployeeFirstNameEditElement().value,
+		password : getEmployeePasswordEditElement().value,
         classification: getEmployeeTypeSelectElement().value
     };
     // TODO: Actually save the employee via an AJAX call
