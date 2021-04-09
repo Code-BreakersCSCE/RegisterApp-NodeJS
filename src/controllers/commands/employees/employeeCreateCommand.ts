@@ -21,7 +21,7 @@ export function validateSaveRequest(
 	} else if (isBlankString(req.lastName)) {
 		invalidReq = true;
 		errMesage = "last name is blank";
-	}else if (isBlankString(req.password)) {
+	} else if (isBlankString(req.password)) {
 		invalidReq = true;
 		errMesage = Resources.getString(ResourceKey.EMPLOYEE_PASSWORD_INVALID);
 	} else if (
