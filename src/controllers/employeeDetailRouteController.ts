@@ -79,20 +79,17 @@ export const startWithEmployee = async (req: Request, res: Response): Promise<vo
 	}
 
 	return ValidateActiveUser.execute((<Express.Session>req.session).id)
-		.then((activeUserCommandResponse: CommandResponse<ActiveUser>): Promise<void> => {
+		.then((activeUserCommandResponse: CommandResponse<ActiveUser>): Promise<CommandResponse<Employee>> => {
 			if (!EmployeeHelper.isElevatedUser((<ActiveUser>activeUserCommandResponse.data).classification)) {
 				return Promise.reject(<CommandResponse<Employee>>{
 					status: 403,
 					message: Resources.getString(ResourceKey.USER_NO_PERMISSIONS)
 				});
 			}
-			// TODO: Query the employee details using the request route parameter
+
 			return EmployeeQuery.queryById(
 				req.params[ParameterLookup.EmployeeId]);
-			return Promise.resolve();
-			/* TODO: Some employee details in then() function below*/
 		}).then((employeeCommandResponse: CommandResponse<Employee>): void => {
-			// TODO: Serve up the page
 			return res.render(
 				ViewNameLookup.EmployeeDetail,
 				<EmployeeDetailPageResponse>{
@@ -102,7 +99,6 @@ export const startWithEmployee = async (req: Request, res: Response): Promise<vo
 					errorMessage: Resources.getString(req.query[QueryParameterLookup.ErrorCode])
 				});
 		}).catch((error: any): void => {
-			// TODO: Handle any errors that occurred
 			return processStartEmployeeDetailError(error, res);
 		});
 };
