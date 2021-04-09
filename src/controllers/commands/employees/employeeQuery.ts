@@ -5,7 +5,7 @@ import * as EmployeeRepository from "../models/employeeModel";
 import { Resources, ResourceKey } from "../../../resourceLookup";
 import { CommandResponse, Employee } from "../../typeDefinitions";
 
-export const findById = async (recordId?: string): Promise<CommandResponse<Employee>> => {
+export const queryById = async (recordId?: string): Promise<CommandResponse<Employee>> => {
 	if (Helper.isBlankString(recordId)) {
 		return Promise.reject(<CommandResponse<Employee>>{
 			status: 422,
