@@ -15,13 +15,13 @@ export function validateSaveRequest(
 ): CommandResponse<Employee> {
 	let invalidReq = false;
 	let errMesage: String = "";
-	if (!isBlankString(req.firstName)) {
+	if (isBlankString(req.firstName)) {
 		invalidReq = true;
 		errMesage = "first name is blank";
-	} else if (!isBlankString(req.lastName)) {
+	} else if (isBlankString(req.lastName)) {
 		invalidReq = true;
 		errMesage = "last name is blank";
-	} else if (!isBlankString(req.password)) {
+	} else if (isBlankString(req.password)) {
 		invalidReq = true;
 		errMesage = Resources.getString(ResourceKey.EMPLOYEE_PASSWORD_INVALID);
 	} else if (
