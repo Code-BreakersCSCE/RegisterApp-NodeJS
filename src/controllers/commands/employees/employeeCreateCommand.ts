@@ -45,9 +45,9 @@ export async function newEmployee(
 	req: EmployeeSaveRequest,
 	initalEmployee: boolean = false
 ) {
-	let validRequest = validateSaveRequest(req);
+	const validRequest = validateSaveRequest(req);
 	if (validRequest.status == 200) {
-		let newEmployee: EmployeeModel = <EmployeeModel>{
+		const newEmployee: EmployeeModel = <EmployeeModel>{
 			firstName: req.firstName,
 			lastName: req.lastName,
 			password: Buffer.from(hashString(req.password)),

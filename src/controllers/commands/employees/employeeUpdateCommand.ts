@@ -12,7 +12,7 @@ import { validateSaveRequest } from "../employees/employeeCreateCommand";
 import * as DatabaseConnection from "../models/databaseConnection";
 import Sequelize from "sequelize";
 function createUpdateObject(req: EmployeeSaveRequest) {
-	let update: any = {};
+	const update: any = {};
 	if (req.firstName != null) {
 		update.firstName = req.firstName;
 	}
