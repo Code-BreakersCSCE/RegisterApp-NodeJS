@@ -202,7 +202,7 @@ const saveEmployee = async (
 };
 
 export const updateEmployee = async (req: Request, res: Response): Promise<void> => {
-	return saveEmployee(req, res, EmployeeUpdateCommand.employeeUpdate);
+	return saveEmployee(req, res, EmployeeUpdateCommand.updateEmployee);
 };
 
 export const createEmployee = async (req: Request, res: Response): Promise<void> => {
