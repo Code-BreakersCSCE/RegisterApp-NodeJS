@@ -31,7 +31,7 @@ function saveActionClick(event) {
 		lastName: getEmployeeLastNameEditElement().value,
 		firstName: getEmployeeFirstNameEditElement().value,
 		password: getEmployeePasswordEditElement().value,
-		classification: getEmployeeTypeSelectElement().value,
+		classification: getEmployeeTypeSelectElement().value
 	};
 	// TODO: Actually save the employee via an AJAX call
 
