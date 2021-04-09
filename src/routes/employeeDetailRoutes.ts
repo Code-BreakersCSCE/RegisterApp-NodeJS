@@ -11,8 +11,9 @@ function EmployeeDetailRoutes(server: express.Express) {
 			
 	server.get(
 			(RouteLookup.EmployeeDetail + RouteLookup.ProductIdParameter),
-			EmployeeDetailRouteController.start*/WithEmployee/*);
+			EmployeeDetailRouteController.startWithEmployee);
 			
+		
 	server.patch(
 			(RouteLookup.API + RouteLookup.EmployeeDetail + RouteLookup.EmployeeIdParameter),
 			EmployeeDetailRouteController.updateEmployee);
@@ -21,6 +22,7 @@ function EmployeeDetailRoutes(server: express.Express) {
 			(RouteLookup.API + RouteLookup.EmployeeDetail),
 			EmployeeDetailRouteController.createEmployee);
 			
+	// Add employee query 
 }
 
 module.exports.routes = EmployeeDetailRoutes;
