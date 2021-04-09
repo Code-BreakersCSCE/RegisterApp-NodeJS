@@ -286,5 +286,5 @@ export const createEmployee = async (
 	req: Request,
 	res: Response
 ): Promise<void> => {
-	return saveEmployee(req, res, EmployeeCreateCommand.execute); // TODO: invoke saveEmployee() with the appropriate save functionality
+	return saveEmployee(req, res, EmployeeCreateCommand.newEmployee); // TODO: invoke saveEmployee() with the appropriate save functionality
 };
