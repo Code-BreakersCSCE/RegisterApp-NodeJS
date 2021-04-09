@@ -21,12 +21,12 @@ function saveActionClick(event) {
     saveActionElement.disabled = true;
 
     const employeeId = getEmployeeId();
-    const employeeIdIsDefined = ((employeeId != null) && (employeeId.trim() !== ""));
+    const employeeIdIsDefined = (employeeId.trim() !== "");
 	const saveActionUrl = ("/api/employeeDetail/"
     + (employeeIdIsDefined ? employeeId : ""));
     const saveEmployeeRequest = {
         id: employeeId,
-	managerId: getEmployeeManagerId().value,
+	managerId: getEmployeeManagerId(),
         lastname : getEmployeeLastNameEditElement().value,
 	firstname : getEmployeeFirstNameEditElement().value,
 	password : getEmployeePasswordEditElement().value,
@@ -35,7 +35,7 @@ function saveActionClick(event) {
     // TODO: Actually save the employee via an AJAX call
 
     if (employeeIdIsDefined){
-        ajaxPut(saveActionUrl, saveEmployeeRequest, (callbackResponse) => {
+        ajaxPatch(saveActionUrl, saveEmployeeRequest, (callbackResponse) => {
 		saveActionElement.disabled = false;
 
         if (isSuccessResponse(callbackResponse)) {    
@@ -59,34 +59,34 @@ function saveActionClick(event) {
 }
 
 function validateSave() {
-	const firstNameElement = getEmployeeFirstNameEditElement();
-	if (firstNameElement.value.trim() === "") {
+	const firstNameEditElement = getEmployeeFirstNameEditElement();
+	if (firstNameEditElement.value.trim() === "") {
 		displayError("Please provide a valid employee First name.");
-		firstNameElement.focus();
-		firstNameElement.select();
+		firstNameEditElement.focus();
+		firstNameEditElement.select();
 		return false;
 	}
 
-	const lastNameElement = getEmployeeLastNameEditElement();
-	if (lastNameElement.value.trim() === "") {
+	const lastNameEditElement = getEmployeeLastNameEditElement();
+	if (lastNameEditElement.value.trim() === "") {
 		displayError("Please provide a valid employee last name.");
-		lastNameElement.focus();
-		lastNameElement.select();
+		lastNameEditElement.focus();
+		lastNameEditElement.select();
 		return false;
 	}
 
-	const passwordElement = getEmployeePasswordEditElement();
-	if (passwordElement.value.trim() === "") {
+	const passwordEditElement = getEmployeePasswordEditElement();
+	if (passwordEditElement.value.trim() === "") {
 		displayError("Please provide a valid employee password.");
-		passwordElement.focus();
-		passwordElement.select();
+		passwordEditElement.focus();
+		passwordEditElement.select();
 		return false;
 	}
 
-	if (passwordElement.value !== getEmployeeConfirmPassword()) {
+	if (passwordEditElement.value !== getEmployeeConfirmPassword()) {
 		displayError("Passwords do not match.");
-		passwordElement.focus()
-		passwordElement.select();
+		passwordEditElement.focus()
+		passwordEditElement.select();
 		return false;
 	}
 
