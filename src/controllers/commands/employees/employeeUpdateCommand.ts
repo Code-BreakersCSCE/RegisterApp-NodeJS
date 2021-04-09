@@ -36,7 +36,7 @@ function createUpdateObject(req: EmployeeSaveRequest) {
 }
 
 export async function updateEmployee(req: EmployeeSaveRequest) {
-	let validRequest = validateSaveRequest(req);
+	const validRequest = validateSaveRequest(req);
 	if (validRequest.status == 200) {
 		return DatabaseConnection.createTransaction().then(function (trans) {
 			return employee
