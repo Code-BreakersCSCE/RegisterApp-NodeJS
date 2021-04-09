@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import { Resources, ResourceKey } from "../resourceLookup";
 import * as EmployeeSignIn from "./commands/employees/employeeSignInCommand";
-import * as ClearActiveUser from "./commands/activeUsers/clearActiveUserCommand";
+import * as ClearActiveUser from "./commands/activeUsers/deleteActiveUser";
 import * as EmployeeExistsQuery from "./commands/employees/activeEmployeeExistsQuery";
 import { PageResponse, CommandResponse, ApiResponse, SignInPageResponse } from "./typeDefinitions";
 import { ViewNameLookup, RouteLookup, QueryParameterLookup, ParameterLookup } from "./lookups/routingLookup";
