@@ -35,7 +35,7 @@ function saveActionClick(event) {
     // TODO: Actually save the employee via an AJAX call
 
     if (employeeIdIsDefined){
-        ajaxPut(saveActionUrl, saveemployeeRequest, (callbackResponse) => {
+        ajaxPut(saveActionUrl, saveEmployeeRequest, (callbackResponse) => {
 		saveActionElement.disabled = false;
 
         if (isSuccessResponse(callbackResponse)) {    
@@ -44,7 +44,7 @@ function saveActionClick(event) {
         });
     
     }  else {
-        ajaxPost(saveActionUrl, saveemployeeRequest, (callbackResponse) => {
+        ajaxPost(saveActionUrl, saveEmployeeRequest, (callbackResponse) => {
 		saveActionElement.disabled = false;
 
 			if (isSuccessResponse(callbackResponse)) {
