@@ -27,8 +27,8 @@ function saveActionClick(event) {
     const saveEmployeeRequest = {
         id: employeeId,
 	managerId: getEmployeeManagerId().value,
-        lastname : getEmployeeLastNameElement().value,
-	firstname : getEmployeeFirstNameElement().value,
+        lastname : getEmployeeLastNameEditElement().value,
+	firstname : getEmployeeFirstNameEditElement().value,
 	password : getEmployeePasswordEditElement().value,
         classification: getEmployeeTypeSelectElement().value
     };
