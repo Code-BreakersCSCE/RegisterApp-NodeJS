@@ -4,10 +4,10 @@ document.addEventListener("DOMContentLoaded", () => {
 	// TODO: Things that need doing when the view is loaded
     document.getElementById("saveButton").addEventListener("click", saveActionClick);
 	
-	const employeefirstnameElement = getEmployeeFirstNameElement();
+	const employeeFirstNameEditElement = getEmployeeFirstNameEditElement();
 
-	employeefirstnameElement.focus();
-	employeefirstnameElement.select();
+	employeeFirstNameEditElement.focus();
+	employeeFirstNameEditElement.select();
 	
 });
 
@@ -59,7 +59,7 @@ function saveActionClick(event) {
 }
 
 function validateSave() {
-	const firstNameElement = getEmployeeFirstNameElement();
+	const firstNameElement = getEmployeeFirstNameEditElement();
 	if (firstNameElement.value.trim() === "") {
 		displayError("Please provide a valid employee First name.");
 		firstNameElement.focus();
@@ -67,7 +67,7 @@ function validateSave() {
 		return false;
 	}
 
-	const lastNameElement = getEmployeeLastNameElement();
+	const lastNameElement = getEmployeeLastNameEditElement();
 	if (lastNameElement.value.trim() === "") {
 		displayError("Please provide a valid employee last name.");
 		lastNameElement.focus();
@@ -75,7 +75,7 @@ function validateSave() {
 		return false;
 	}
 
-	const passwordElement = getEmployeePasswordElement();
+	const passwordElement = getEmployeePasswordEditElement();
 	if (passwordElement.value.trim() === "") {
 		displayError("Please provide a valid employee password.");
 		passwordElement.focus();
