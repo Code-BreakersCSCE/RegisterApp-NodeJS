@@ -7,7 +7,7 @@ import { PageResponse, CommandResponse, ApiResponse, SignInPageResponse } from "
 import { ViewNameLookup, RouteLookup, QueryParameterLookup, ParameterLookup } from "./lookups/routingLookup";
 
 export const start = async (req: Request, res: Response): Promise<void> => {
-	return EmployeeExistsQuery.query()
+	return EmployeeExistsQuery.execute()
 		.then((employeeExistsCommandResponse: CommandResponse<boolean>): void => {
 			if ((employeeExistsCommandResponse.data == null)
 				|| !employeeExistsCommandResponse.data) {
