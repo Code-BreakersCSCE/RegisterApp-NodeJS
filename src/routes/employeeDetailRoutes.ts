@@ -8,9 +8,8 @@ function EmployeeDetailRoutes(server: express.Express) {
 	server.get(RouteLookup.EmployeeDetail, EmployeeDetailRouteController.start);
 
 	server.get(
-		RouteLookup.EmployeeDetail + RouteLookup.ProductIdParameter,
-		EmployeeDetailRouteController.startWithEmployee
-	);
+		(RouteLookup.EmployeeDetail + RouteLookup.EmployeeIdParameter),
+		EmployeeDetailRouteController.startWithEmployee);
 
 	server.patch(
 		RouteLookup.API +
