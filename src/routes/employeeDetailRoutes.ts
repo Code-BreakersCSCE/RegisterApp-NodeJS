@@ -12,14 +12,14 @@ function EmployeeDetailRoutes(server: express.Express) {
 		EmployeeDetailRouteController.startWithEmployee);
 
 	server.patch(
-		RouteLookup.API +
+		(RouteLookup.API +
 			RouteLookup.EmployeeDetail +
-			RouteLookup.EmployeeIdParameter,
+			RouteLookup.EmployeeIdParameter),
 		EmployeeDetailRouteController.updateEmployee
 	);
 
 	server.post(
-		RouteLookup.API + RouteLookup.EmployeeDetail,
+		(RouteLookup.API + RouteLookup.EmployeeDetail),
 		EmployeeDetailRouteController.createEmployee
 	);
 
