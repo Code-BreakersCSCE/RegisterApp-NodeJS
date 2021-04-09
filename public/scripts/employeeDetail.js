@@ -103,7 +103,7 @@ function validateSave() {
 }
 
 function completeSaveAction(callbackResponse){
-	if(callbackResponse.data = null){
+	if(callbackResponse.data == null){
 		return;
 	}
 	if ((callbackResponse.data.redirectUrl != null)
