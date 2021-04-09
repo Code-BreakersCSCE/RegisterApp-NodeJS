@@ -8,40 +8,41 @@ import { Resources, ResourceKey } from "../../../resourceLookup";
 import { hashString, mapEmployeeData } from "./helpers/employeeHelper";
 import { isBlankString } from "../helpers/helper";
 import { EmployeeClassification } from "../models/constants/entityTypes";
-import * as Helper from "../helpers/helper";
 
-const validateSaveRequest = (
-	employeeSaveRequest: EmployeeSaveRequest,
-	isInitialEmployee: boolean = false
-): CommandResponse<Employee> => {
-
-	let errorMessage: string = "";
-
-	if (Helper.isBlankString(employeeSaveRequest.firstName)) {
-		errorMessage = Resources.getString(ResourceKey.EMPLOYEE_FIRST_NAME_INVALID);
-	} else if (Helper.isBlankString(employeeSaveRequest.lastName)) {
-		errorMessage = Resources.getString(ResourceKey.EMPLOYEE_LAST_NAME_INVALID);
-	} else if (Helper.isBlankString(employeeSaveRequest.password)) {
-		errorMessage = Resources.getString(ResourceKey.EMPLOYEE_PASSWORD_INVALID);
-	} else if (!isInitialEmployee
-		&& ((employeeSaveRequest.classification == null)
-			|| isNaN(employeeSaveRequest.classification)
-			|| !(employeeSaveRequest.classification in EmployeeClassification))) {
-
-		errorMessage = Resources.getString(ResourceKey.EMPLOYEE_TYPE_INVALID);
-	} else if (!Helper.isBlankString(employeeSaveRequest.managerId)
-		&& !Helper.isValidUUID(<string>employeeSaveRequest.managerId)) {
-
-		errorMessage = Resources.getString(ResourceKey.EMPLOYEE_MANAGER_ID_INVALID);
+export function validateSaveRequest(
+	req: EmployeeSaveRequest,
+	initalEmployee: boolean = false
+): CommandResponse<Employee> {
+	let invalidReq = false;
+	let errMesage: String = "";
+	if (isBlankString(req.firstName)) {
+		invalidReq = true;
+		errMesage = "first name is blank";
+	} else if (isBlankString(req.lastName)) {
+		invalidReq = true;
+		errMesage = "last name is blank";
+	} else if (isBlankString(req.password)) {
+		invalidReq = true;
+		errMesage = Resources.getString(ResourceKey.EMPLOYEE_PASSWORD_INVALID);
+	} else if (
+		!initalEmployee &&
+		(req.classification == null ||
+			isNaN(req.classification) ||
+			!(req.classification in req))
+	) {
+		errMesage = Resources.getString(ResourceKey.EMPLOYEE_TYPE_INVALID);
+		invalidReq = true;
 	}
 
-	return ((errorMessage === "")
-		? <CommandResponse<Employee>>{ status: 200 }
-		: <CommandResponse<Employee>>{
-			status: 422,
-			message: errorMessage
-		});
-};
+	if (!invalidReq) {
+		return <CommandResponse<Employee>>{ status: 200 };
+	}
+
+	return <CommandResponse<Employee>>{
+		status: 422,
+		message: errMesage,
+	};
+}
 
 export async function newEmployee(
 	req: EmployeeSaveRequest,
