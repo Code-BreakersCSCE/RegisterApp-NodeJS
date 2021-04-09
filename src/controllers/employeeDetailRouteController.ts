@@ -3,9 +3,15 @@
 import { Request, Response } from "express";
 import * as Helper from "./helpers/routeControllerHelper";
 import { Resources, ResourceKey } from "../resourceLookup";
+import * as EmployeeQuery from "./commands/employees/employeeQuery";
 import * as EmployeeHelper from "./commands/employees/helpers/employeeHelper";
+import * as EmployeeCreateCommand from "./commands/employees/employeeCreateCommand";
+import * as EmployeeUpdateCommand from "./commands/employees/employeeUpdateCommand";
+import * as EmployeeExistsQuery from "./commands/employees/activeEmployeeExistsQuery";
 import * as ValidateActiveUser from "./commands/activeUsers/validateActiveUserCommand";
-import { CommandResponse, Employee, EmployeeSaveRequest, ActiveUser } from "./typeDefinitions";
+import { ViewNameLookup, ParameterLookup, RouteLookup, QueryParameterLookup } from "./lookups/routingLookup";
+import { EmployeeClassification, EmployeeClassificationLabel } from "./commands/models/constants/entityTypes";
+import { CommandResponse, Employee, EmployeeDetailPageResponse, EmployeeSaveRequest, EmployeeSaveResponse, EmployeeType, ActiveUser } from "./typeDefinitions";
 
 interface CanCreateEmployee {
 	employeeExists: boolean;
@@ -22,8 +28,7 @@ const determineCanCreateEmployee = async (req: Request): Promise<CanCreateEmploy
 			employeeExists = ((employeeExistsCommandResponse.data != null) && employeeExistsCommandResponse.data);
 			
 		if (!employeeExists) {
-			return Promise.resolve(
-				<CommandResponse<ActiveUser>>{ status: 200});
+			return Promise.resolve(<CommandResponse<ActiveUser>>{ status: 200 });
 		}
 		
 			return ValidateActiveUser.execute((<Express.Session>req.session).id);
