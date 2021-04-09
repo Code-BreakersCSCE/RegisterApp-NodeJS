@@ -15,13 +15,13 @@ export function validateSaveRequest(
 ): CommandResponse<Employee> {
 	let invalidReq = false;
 	let errMesage: String = "";
-	if (isBlankString(req.firstName)) {
+	if (!isBlankString(req.firstName)) {
 		invalidReq = true;
 		errMesage = "first name is blank";
 	} else if (isBlankString(req.lastName)) {
 		invalidReq = true;
 		errMesage = "last name is blank";
-	} else if (isBlankString(req.password)) {
+	}else if (isBlankString(req.password)) {
 		invalidReq = true;
 		errMesage = Resources.getString(ResourceKey.EMPLOYEE_PASSWORD_INVALID);
 	} else if (
@@ -50,7 +50,7 @@ export async function newEmployee(
 ) {
 	const validRequest = validateSaveRequest(req);
 	if (validRequest.status == 200) {
-		const newEmployee: EmployeeModel = <EmployeeModel>{
+		let newEmployee: EmployeeModel = <EmployeeModel>{
 			firstName: req.firstName,
 			lastName: req.lastName,
 			password: Buffer.from(hashString(req.password)),
