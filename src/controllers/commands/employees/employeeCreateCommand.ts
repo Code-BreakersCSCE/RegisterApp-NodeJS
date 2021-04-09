@@ -5,7 +5,7 @@ import { Resources, ResourceKey } from "../../../resourceLookup";
 import { EmployeeClassification } from "../models/constants/entityTypes";
 import { CommandResponse, Employee, EmployeeSaveRequest } from "../../typeDefinitions";
 
-export  validateSaveRequest = (
+export  const validateSaveRequest = (
 	employeeSaveRequest: EmployeeSaveRequest,
 	isInitialEmployee: boolean = false
 ): CommandResponse<Employee> => {
